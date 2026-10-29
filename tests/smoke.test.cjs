@@ -38,10 +38,10 @@ const worker = read('sw.js');
 for (const id of ['pageContent', 'modalBackdrop', 'workspaceImportInput', 'toastRegion']) {
   assert.ok(html.includes(`id="${id}"`), `HTML is missing required mount/control: ${id}`);
 }
-for (const feature of ['overview', 'academics', 'planner', 'study', 'insights', 'personal', 'trackers', 'settings']) {
+for (const feature of ['overview', 'academics', 'semesters', 'planner', 'study', 'insights', 'personal', 'trackers', 'settings']) {
   assert.ok(app.includes(`${feature}:`), `App route missing: ${feature}`);
 }
-for (const action of ['trackerForm', 'trackerRecordForm', 'export-data', 'export-csv', 'import-confirm']) {
+for (const action of ['trackerForm', 'trackerRecordForm', 'semesterForm', 'export-data', 'export-csv', 'import-confirm']) {
   assert.ok(app.includes(action), `Expected workspace capability missing: ${action}`);
 }
 assert.ok(worker.includes('APP_SHELL'), 'Service worker must declare an app shell cache');
