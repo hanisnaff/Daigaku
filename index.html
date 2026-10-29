@@ -1,32 +1,75 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Daigaku</title>
-    <link rel="stylesheet" href="css/base.css" />
-  </head>
-
-  <body>
-    <header>
-      <h1>Daigaku</h1>
-      <nav class="nav">
-        <ul class="nav-list">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="dashboard.html">Dashboard</a></li>
-          <li><a href="semesters.html">Semesters</a></li>
-        </ul>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f3ee">
+  <meta name="description" content="Daigaku is your personal student workspace for academics, planning and focused study.">
+  <title>Daigaku — Your student workspace</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#overview" aria-label="Daigaku home">
+        <span class="brand-mark"><span></span><span></span><span></span></span>
+        <span class="brand-word">daigaku<span class="brand-period">.</span></span>
+      </a>
+      <div class="workspace-switcher">
+        <span class="workspace-avatar">H</span>
+        <span class="workspace-copy"><strong>My workspace</strong><small>Personal · Private</small></span>
+        <button class="icon-button tiny" id="workspaceMenu" aria-label="Workspace options" title="Workspace options">⌄</button>
+      </div>
+      <p class="nav-label">WORKSPACE</p>
+      <nav class="primary-nav">
+        <a href="#overview" class="nav-link active" data-route="overview"><span class="nav-icon">◫</span><span>Overview</span><kbd>G O</kbd></a>
+        <a href="#academics" class="nav-link" data-route="academics"><span class="nav-icon">▤</span><span>Academics</span></a>
+        <a href="#semesters" class="nav-link" data-route="semesters"><span class="nav-icon">▦</span><span>Semesters</span></a>
+        <a href="#planner" class="nav-link" data-route="planner"><span class="nav-icon">▦</span><span>Planner</span><span class="nav-count" id="taskNavCount">3</span></a>
+        <a href="#study" class="nav-link" data-route="study"><span class="nav-icon">▧</span><span>Study library</span></a>
+        <a href="#insights" class="nav-link" data-route="insights"><span class="nav-icon">⌁</span><span>Insights</span></a>
       </nav>
-    </header>
-    <main>
-      <h2>Welcome to Daigaku</h2>
-      <p>
-        Home to your academic records. Helps you manage your academic records
-        including attendance,tests,assignments,gpa etc.
-      </p>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-heading"><p class="nav-label">YOUR SPACE</p><button class="icon-button tiny" id="addSpace" aria-label="Add a space" title="Add a space">＋</button></div>
+      <a href="#personal" class="nav-link" data-route="personal"><span class="nav-icon">✳</span><span>Personal life</span><span class="private-dot" title="Private workspace"></span></a>
+      <a href="#subjects" class="nav-link" data-route="subjects"><span class="nav-icon">◉</span><span>My subjects</span></a>
+      <a href="#trackers" class="nav-link" data-route="trackers"><span class="nav-icon">▧</span><span>Custom trackers</span></a>
+      <div class="sidebar-bottom">
+        <div class="sync-status"><span class="status-dot"></span><span><strong id="syncLabel">Saved on this device</strong><small id="syncSub">Offline-ready demo</small></span></div>
+        <a href="#settings" class="nav-link" data-route="settings"><span class="nav-icon">⚙</span><span>Settings</span></a>
+        <button class="profile-card" id="profileButton">
+          <span class="profile-avatar">HJ</span><span class="profile-copy"><strong>Hitesh Jogeshwari</strong><small>Personal account</small></span><span class="profile-more">···</span>
+        </button>
+      </div>
+    </aside>
+    <div class="mobile-scrim" id="mobileScrim"></div>
+    <main class="main-panel">
+      <header class="topbar">
+        <div class="breadcrumbs"><span class="crumb-muted">My workspace</span><span class="crumb-slash">/</span><strong id="pageCrumb">Overview</strong></div>
+        <div class="topbar-actions">
+          <button class="search-trigger" id="searchTrigger"><span class="search-symbol">⌕</span><span>Search anything...</span><kbd>⌘ K</kbd></button>
+          <button class="icon-button top-icon" id="themeToggle" aria-label="Toggle dark mode" title="Toggle appearance">◐</button>
+          <button class="icon-button top-icon notification-button" id="notificationButton" aria-label="Notifications" title="Notifications">♧<i></i></button>
+          <button class="mobile-menu icon-button" id="mobileMenu" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">☰</button>
+        </div>
+      </header>
+      <div class="page-content" id="pageContent" tabindex="-1"></div>
+      <footer class="app-footer"><span>Daigaku <span class="footer-dot">·</span> made for the way you learn</span><span><span class="status-dot"></span> Your workspace is saved locally</span></footer>
     </main>
-    <footer>
-      <p>Copyright 2026 Daigaku</p>
-    </footer>
-  </body>
+  </div>
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head"><div><p class="eyebrow" id="modalEyebrow">QUICK ACTION</p><h2 id="modalTitle">Create something</h2></div><button class="icon-button" id="closeModal" aria-label="Close dialog">×</button></div>
+      <div id="modalBody"></div>
+    </section>
+  </div>
+  <input type="file" id="workspaceImportInput" accept="application/json,.json" hidden aria-label="Choose Daigaku workspace backup">
+  <div class="toast-region" id="toastRegion" role="status" aria-live="polite"></div>
+  <script src="js/app.js" defer></script>
+</body>
 </html>
