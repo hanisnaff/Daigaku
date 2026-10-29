@@ -46,4 +46,10 @@ for (const action of ['trackerForm', 'trackerRecordForm', 'semesterForm', 'expor
 }
 assert.ok(worker.includes('APP_SHELL'), 'Service worker must declare an app shell cache');
 assert.ok(worker.includes('skipWaiting'), 'Service worker should support safe activation');
+
+// Regression checks for navigation and semester state consistency.
+assert.ok(html.includes('href="#semesters"') && app.includes("semesters:'Semesters'"), 'Semesters must be reachable from navigation');
+assert.ok(!app.includes("if(location.hash==='#semesters')location.hash='#academics'"), 'The Semesters route must not be redirected to Academics');
+assert.ok(app.includes("else state.profile.term=(state.semesters.find(term=>term.active)||state.semesters[0]).name"), 'Editing a semester must keep the displayed active term in sync');
+assert.ok(app.includes("case 'set-active-semester'"), 'Users must be able to switch the active semester');
 console.log('Daigaku smoke checks passed.');
