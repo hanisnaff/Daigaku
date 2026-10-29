@@ -58,6 +58,8 @@ assert.ok(app.includes("else state.profile.term=(state.semesters.find(term=>term
 assert.ok(app.includes("case 'set-active-semester'"), 'Users must be able to switch the active semester');
 assert.ok(!app.includes('.nameaddActivity('), 'Saving a semester must not accidentally call activity logging on the term name');
 assert.ok(app.includes("addActivity((existing?'Updated ':'Added ')+item.name)"), 'Creating or editing a semester must record activity');
+assert.ok(html.includes('role="dialog" aria-modal="true"'), 'Dialogs must expose accessible dialog semantics');
+assert.ok(app.includes("e.key==='Tab'&&!$('#modalBackdrop').hidden"), 'Keyboard focus must remain inside an open dialog');
 assert.ok(app.includes("'habits','trackers','events'"), 'Workspace import must safely restore custom trackers');
 assert.ok(app.includes("if(!activeFound)state.semesters[0].active=true"), 'Imported semesters must retain a valid active term');
 console.log('Daigaku smoke checks passed.');
