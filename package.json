@@ -1,0 +1,10 @@
+{
+  "name": "daigaku",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Daigaku student workspace prototype",
+  "scripts": {
+    "test": "node tests/smoke.test.cjs",
+    "check:syntax": "node --check js/app.js && node --check sw.js"
+  }
+}
