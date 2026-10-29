@@ -8,7 +8,9 @@ This repository now contains an interactive Phase 1 front-end foundation built w
 
 ### Working in this prototype
 - Dashboard with GPA estimate, attendance, tasks and subject overview
+- Add/edit semesters, choose the active term, and assign subjects to a semester
 - Add/edit subjects, including credits, marks and attendance totals
+- Calculate the current term's estimated GPA and attendance from its assigned subjects
 - GPA estimate using a clearly documented placeholder grade-point scale
 - Task creation, due dates, priorities and completion
 - Calendar events and a month calendar with day selection
