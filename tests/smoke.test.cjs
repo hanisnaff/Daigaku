@@ -56,6 +56,8 @@ assert.ok(html.includes('href="#semesters"') && app.includes("semesters:'Semeste
 assert.ok(!app.includes("if(location.hash==='#semesters')location.hash='#academics'"), 'The Semesters route must not be redirected to Academics');
 assert.ok(app.includes("else state.profile.term=(state.semesters.find(term=>term.active)||state.semesters[0]).name"), 'Editing a semester must keep the displayed active term in sync');
 assert.ok(app.includes("case 'set-active-semester'"), 'Users must be able to switch the active semester');
+assert.ok(!app.includes('.nameaddActivity('), 'Saving a semester must not accidentally call activity logging on the term name');
+assert.ok(app.includes("addActivity((existing?'Updated ':'Added ')+item.name)"), 'Creating or editing a semester must record activity');
 assert.ok(app.includes("'habits','trackers','events'"), 'Workspace import must safely restore custom trackers');
 assert.ok(app.includes("if(!activeFound)state.semesters[0].active=true"), 'Imported semesters must retain a valid active term');
 console.log('Daigaku smoke checks passed.');
