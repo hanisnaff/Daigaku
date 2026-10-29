@@ -14,13 +14,23 @@ This repository now contains an interactive Phase 1 front-end foundation built w
 - Calendar events and a month calendar with day selection
 - Study-session logging and connected study-resource cards
 - Personal habit tracker
+- Custom tracker builder with editable text, number, date and checkbox fields, plus record creation and deletion
 - Local global search and command palette (Ctrl/Cmd + K)
 - Dark mode, accent color, reduced-motion preference
-- JSON workspace export and CSV subject export
+- JSON workspace export/import (with preview and automatic pre-import backup) and CSV subject export
+- Dependency-free smoke tests and GitHub Actions validation on pull requests
 - Browser-local persistence and an installable PWA shell/service worker
 - Responsive desktop/mobile navigation and basic keyboard accessibility
 
 ## Run locally
+
+Run the static validation checks with Node.js 20 or newer:
+
+```bash
+npm test
+npm run check:syntax
+```
+
 
 Open `index.html` in a browser for the core prototype. For service-worker/PWA testing, serve the folder over localhost or HTTPS, for example:
 
