@@ -60,6 +60,9 @@ assert.ok(!app.includes('.nameaddActivity('), 'Saving a semester must not accide
 assert.ok(app.includes("addActivity((existing?'Updated ':'Added ')+item.name)"), 'Creating or editing a semester must record activity');
 assert.ok(html.includes('role="dialog" aria-modal="true"'), 'Dialogs must expose accessible dialog semantics');
 assert.ok(app.includes("e.key==='Tab'&&!$('#modalBackdrop').hidden"), 'Keyboard focus must remain inside an open dialog');
+assert.ok(html.includes('aria-controls="sidebar" aria-expanded="false"'), 'Mobile menu must expose its controlled navigation state');
+assert.ok(app.includes("menu.setAttribute('aria-expanded','false')"), 'Closing the mobile navigation must reset its expanded state');
+assert.ok(app.includes("$('#sidebar').addEventListener('click',e=>{if(e.target.closest('a[href^=\"#\"]'))closeSidebar()})"), 'Selecting a sidebar route must close the mobile navigation');
 assert.ok(app.includes("'habits','trackers','events'"), 'Workspace import must safely restore custom trackers');
 assert.ok(app.includes("if(!activeFound)state.semesters[0].active=true"), 'Imported semesters must retain a valid active term');
 console.log('Daigaku smoke checks passed.');
