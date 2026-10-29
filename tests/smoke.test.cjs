@@ -62,6 +62,7 @@ assert.ok(html.includes('role="dialog" aria-modal="true"'), 'Dialogs must expose
 assert.ok(app.includes("e.key==='Tab'&&!$('#modalBackdrop').hidden"), 'Keyboard focus must remain inside an open dialog');
 assert.ok(html.includes('aria-controls="sidebar" aria-expanded="false"'), 'Mobile menu must expose its controlled navigation state');
 assert.ok(app.includes("menu.setAttribute('aria-expanded','false')"), 'Closing the mobile navigation must reset its expanded state');
+assert.ok(app.includes("if(wasOpen&&window.matchMedia('(max-width: 900px)').matches)menu.focus()"), 'Closing mobile navigation must return focus to the menu button');
 assert.ok(app.includes("$('#sidebar').addEventListener('click'") && app.includes("closeSidebar()"), 'Selecting a sidebar route must close the mobile navigation');
 assert.ok(app.includes("'habits','trackers','events'"), 'Workspace import must safely restore custom trackers');
 assert.ok(app.includes("if(!activeFound)state.semesters[0].active=true"), 'Imported semesters must retain a valid active term');
