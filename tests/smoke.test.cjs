@@ -46,6 +46,10 @@ for (const action of ['trackerForm', 'trackerRecordForm', 'semesterForm', 'expor
 }
 assert.ok(worker.includes('APP_SHELL'), 'Service worker must declare an app shell cache');
 assert.ok(worker.includes('skipWaiting'), 'Service worker should support safe activation');
+assert.ok(worker.includes("daigaku-shell-v2"), 'Service worker cache version must change when app-shell assets change');
+assert.ok(app.includes('function localISODate(date)'), 'Planner dates must use local calendar dates, not UTC conversion');
+assert.ok(app.includes('let calendarMonth=new Date(today.getFullYear(),today.getMonth(),1)'), 'Planner should open on the current month');
+assert.ok(app.includes('let selectedCalendarDate=localISODate(new Date())'), 'Planner should select today on startup');
 
 // Regression checks for navigation and semester state consistency.
 assert.ok(html.includes('href="#semesters"') && app.includes("semesters:'Semesters'"), 'Semesters must be reachable from navigation');
