@@ -311,6 +311,10 @@ test("exports subject records as CSV and neutralises spreadsheet formulas", () =
   const { element, downloads } = setup([
     { name: 'Software Engineering, "Core"', attended: 8, total: 10, grade: 'A', semester: 'Semester 5' },
     { name: '=HYPERLINK("https://example.com")', attended: 1, total: 2, grade: '', semester: 'Semester 5' },
+    { name: '+SUM(1,1)', attended: 0, total: 0, grade: '', semester: 'Semester 5' },
+    { name: '-2+3', attended: 0, total: 0, grade: '', semester: 'Semester 5' },
+    { name: '@SUM(1,1)', attended: 0, total: 0, grade: '', semester: 'Semester 5' },
+    { name: '\t=2+2', attended: 0, total: 0, grade: '', semester: 'Semester 5' },
   ]);
   assert.equal(element("export-subjects").hidden, false);
   element("export-subjects").listeners.click();
@@ -321,6 +325,10 @@ test("exports subject records as CSV and neutralises spreadsheet formulas", () =
   const csv = decodedCsv.replace(/^\uFEFF/, "");
   assert.match(csv, /"Software Engineering, ""Core""","Semester 5","8","10","80%","A"/);
   assert.match(csv, /"'=HYPERLINK\(""https:\/\/example\.com""\)"/);
+  assert.match(csv, /"'\+SUM\(1,1\)"/);
+  assert.match(csv, /"'-2\+3"/);
+  assert.match(csv, /"'@SUM\(1,1\)"/);
+  assert.match(csv, /"'\\t=2\+2"/);
   assert.match(csv, /"Subject","Semester"/);
 });
 
