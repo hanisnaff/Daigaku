@@ -328,7 +328,7 @@ test("exports subject records as CSV and neutralises spreadsheet formulas", () =
   assert.match(csv, /"'\+SUM\(1,1\)"/);
   assert.match(csv, /"'-2\+3"/);
   assert.match(csv, /"'@SUM\(1,1\)"/);
-  assert.match(csv, /"'\\t=2\+2"/);
+  assert.match(csv, /"'\t=2\+2"/);
   assert.match(csv, /"Subject","Semester"/);
 });
 
