@@ -5,7 +5,7 @@ import vm from "node:vm";
 
 const appSource = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 
-function setup(initialSubjects = [], confirmResult = true) {
+function setup(initialSubjects = [], confirmResult = true, storageWriteFails = false) {
   const elements = new Map();
   const downloads = [];
   const element = (id) => {
@@ -28,7 +28,8 @@ function setup(initialSubjects = [], confirmResult = true) {
 
   for (const id of ["subject-list", "subject-count", "attendance-average", "grade-count", "subject-form", "form-message", "subject-name", "attended", "total", "grade", "semester", "submit-subject", "cancel-edit", "semester-summary", "export-subjects", "subject-search"]) element(id);
   element("submit-subject").textContent = "Add subject";
-  const store = new Map([["daigaku.subjects.v1", JSON.stringify(initialSubjects)]]);
+  const initialValue = typeof initialSubjects === "string" ? initialSubjects : JSON.stringify(initialSubjects);
+  const store = new Map([["daigaku.subjects.v1", initialValue]]);
   class FormDataMock {
     constructor() {}
     get(name) {
@@ -40,7 +41,10 @@ function setup(initialSubjects = [], confirmResult = true) {
     document: { getElementById: element, createElement() { return { click() { downloads.push(this); }, remove() {} }; }, body: { appendChild() {} } },
     localStorage: {
       getItem(key) { return store.has(key) ? store.get(key) : null; },
-      setItem(key, value) { store.set(key, value); },
+      setItem(key, value) {
+        if (storageWriteFails) throw new Error("Storage quota exceeded");
+        store.set(key, value);
+      },
     },
     FormData: FormDataMock,
     window: { confirm() { return confirmResult; } },
@@ -70,6 +74,24 @@ test("hides CSV export until at least one subject exists", () => {
   assert.equal(element("export-subjects").hidden, true);
   element("export-subjects").listeners.click();
   assert.equal(downloads.length, 0);
+});
+
+test("recovers from malformed local storage without crashing", () => {
+  const { element } = setup("{not valid json");
+  assert.equal(element("subject-count").textContent, "0");
+  assert.match(element("subject-list").innerHTML, /No subjects yet/);
+  assert.match(element("semester-summary").innerHTML, /No records yet/);
+});
+
+test("does not report a subject as saved when browser storage rejects the write", () => {
+  const { element, store } = setup([], true, true);
+  element("subject-name").value = "Algorithms";
+  element("attended").value = "2";
+  element("total").value = "3";
+  element("subject-form").listeners.submit({ preventDefault() {} });
+  assert.match(element("form-message").textContent, /could not save/i);
+  assert.equal(element("subject-count").textContent, "0");
+  assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 0);
 });
 
 test("loads old records and calculates weighted attendance", () => {
