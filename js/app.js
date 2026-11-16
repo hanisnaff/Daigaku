@@ -1,6 +1,8 @@
 (() => {
   "use strict";
   const KEY = "daigaku.subjects.v1";
+  const ALLOWED_GRADES = new Set(["", "O", "A+", "A", "B+", "B", "C", "F"]);
+  const isValidSemester = (semester) => semester === "Current semester" || /^Semester [1-8]$/.test(semester);
   const $ = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
   const normalise = (item) => {
@@ -14,16 +16,14 @@
     };
     const total = finiteCount(item?.total);
     const attended = Math.min(finiteCount(item?.attended), total);
-    const allowedGrades = new Set(["", "O", "A+", "A", "B+", "B", "C", "F"]);
     const grade = String(item?.grade ?? "");
     const semester = String(item?.semester ?? "Current semester");
-    const validSemester = semester === "Current semester" || /^Semester [1-8]$/.test(semester);
     return {
       name: String(item?.name ?? "").trim().slice(0,70),
       attended,
       total,
-      grade: allowedGrades.has(grade) ? grade : "",
-      semester: validSemester ? semester : "Current semester"
+      grade: ALLOWED_GRADES.has(grade) ? grade : "",
+      semester: isValidSemester(semester) ? semester : "Current semester"
     };
   };
   const read = () => {
@@ -252,8 +252,6 @@
         const next = subjects.slice();
         let imported = 0;
         let skipped = 0;
-        const allowedGrades = new Set(["", "O", "A+", "A", "B+", "B", "C", "F"]);
-
         for (const row of rows) {
           if (row.length === 1 && !row[0].trim()) continue;
           if (row.length !== expectedHeader.length) {
@@ -267,7 +265,7 @@
           const attended = Number(rawAttended);
           const total = Number(rawTotal);
           const grade = String(rawGrade ?? "").trim();
-          const validSemester = semester === "Current semester" || /^Semester [1-8]$/.test(semester);
+          const validSemester = isValidSemester(semester);
           const validCounts = /^\d+$/.test(rawAttended)
             && /^\d+$/.test(rawTotal)
             && Number.isSafeInteger(attended)
@@ -275,7 +273,7 @@
             && attended <= total;
 
           const validName = Boolean(name) && name.length <= 70 && !/[\u0000-\u001F\u007F]/.test(name);
-          if (!validName || !validSemester || !validCounts || !allowedGrades.has(grade)) {
+          if (!validName || !validSemester || !validCounts || !ALLOWED_GRADES.has(grade)) {
             skipped += 1;
             continue;
           }
