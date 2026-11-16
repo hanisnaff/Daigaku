@@ -65,8 +65,8 @@ test("loads old records and calculates weighted attendance", () => {
   assert.match(element("semester-summary").innerHTML, /Current semester/);
 });
 
-test("filters dashboard subjects without changing semester totals", () => {
-  const { element } = setup([
+test("filters dashboard subjects without changing semester totals or exports", () => {
+  const { element, downloads } = setup([
     { name: "C++", attended: 8, total: 10, semester: "Semester 5" },
     { name: "Data Structures", attended: 4, total: 5, semester: "Semester 5" },
   ]);
@@ -76,6 +76,10 @@ test("filters dashboard subjects without changing semester totals", () => {
   assert.doesNotMatch(element("subject-list").innerHTML, /C\+\+/);
   assert.match(element("semester-summary").innerHTML, /C\+\+/);
   assert.equal(element("subject-count").textContent, "2");
+  element("export-subjects").listeners.click();
+  const exported = decodeURIComponent(downloads[0].href.split(",").slice(1).join(","));
+  assert.match(exported, /C\+\+/);
+  assert.match(exported, /Data Structures/);
   element("subject-search").value = "no match";
   element("subject-search").listeners.input();
   assert.match(element("subject-list").innerHTML, /No subjects match your search/);
