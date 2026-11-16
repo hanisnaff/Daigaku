@@ -24,12 +24,43 @@
   let editingIndex = null;
 
   function renderDashboard() {
-    const list = $("subject-list");
+    const exportButton = $("export-subjects");
+  if (exportButton) exportButton.addEventListener("click", () => {
+    if (!subjects.length) return;
+    const csvCell = (value) => {
+      let text = String(value ?? "");
+      if (/^\\s*[=+\\-@]/.test(text)) text = "'" + text;
+      return '"' + text.replace(/"/g, '""') + '"';
+    };
+    const rows = [
+      ["Subject", "Semester", "Classes attended", "Total classes", "Attendance", "Grade"],
+      ...subjects.map((subject) => [
+        subject.name,
+        subject.semester,
+        subject.attended,
+        subject.total,
+        subject.total ? Math.round(subject.attended / subject.total * 100) + "%" : "",
+        subject.grade,
+      ]),
+    ];
+    const csv = rows.map((row) => row.map(csvCell).join(",")).join("\\r\\n");
+    const download = document.createElement("a");
+    download.href = "data:text/csv;charset=utf-8,\\uFEFF" + encodeURIComponent(csv);
+    download.download = "daigaku-subjects.csv";
+    download.hidden = true;
+    document.body.appendChild(download);
+    download.click();
+    download.remove();
+  });
+
+  const list = $("subject-list");
     if (!list) return;
     const count = $("subject-count");
     const attendance = $("attendance-average");
     const grades = $("grade-count");
     if (count) count.textContent = String(subjects.length);
+    const exportButton = $("export-subjects");
+    if (exportButton) exportButton.hidden = subjects.length === 0;
     const attended = subjects.reduce((sum,s) => sum + s.attended, 0);
     const total = subjects.reduce((sum,s) => sum + s.total, 0);
     if (attendance) attendance.textContent = total ? Math.round(attended / total * 100) + "%" : "—";
