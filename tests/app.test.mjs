@@ -5,7 +5,7 @@ import vm from "node:vm";
 
 const appSource = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 
-function setup(initialSubjects = []) {
+function setup(initialSubjects = [], confirmResult = true) {
   const elements = new Map();
   const element = (id) => {
     if (!elements.has(id)) {
@@ -42,6 +42,7 @@ function setup(initialSubjects = []) {
       setItem(key, value) { store.set(key, value); },
     },
     FormData: FormDataMock,
+    window: { confirm() { return confirmResult; } },
   };
   vm.runInNewContext(appSource, context);
   return { element, store };
@@ -87,4 +88,23 @@ test("rejects attended classes greater than total", () => {
   element("subject-form").listeners.submit({ preventDefault() {} });
   assert.match(element("form-message").textContent, /cannot be greater/);
   assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 0);
+});
+
+
+test("asks before removing a subject and preserves it when cancelled", () => {
+  const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }], false);
+  element("subject-list").listeners.click({
+    target: { closest(selector) { return selector === "[data-remove]" ? { dataset: { remove: "0" } } : null; } },
+  });
+  assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 1);
+  assert.equal(element("subject-count").textContent, "1");
+});
+
+test("removes a subject after confirmation", () => {
+  const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }], true);
+  element("subject-list").listeners.click({
+    target: { closest(selector) { return selector === "[data-remove]" ? { dataset: { remove: "0" } } : null; } },
+  });
+  assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 0);
+  assert.equal(element("subject-count").textContent, "0");
 });
