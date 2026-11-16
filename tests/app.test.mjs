@@ -79,6 +79,12 @@ test("semester page has one live records container", () => {
   assert.match(page, /id="semester-summary"[^>]*aria-live="polite"/);
 });
 
+test("base styles use readable muted text and respect reduced motion", () => {
+  const css = readFileSync(new URL("../css/base.css", import.meta.url), "utf8");
+  assert.match(css, /--muted:#6a6d7d/);
+  assert.match(css, /prefers-reduced-motion:reduce/);
+});
+
 test("dashboard summary values announce updates to assistive technology", () => {
   const page = readFileSync(new URL("../dashboard.html", import.meta.url), "utf8");
   for (const id of ["subject-count", "attendance-average", "grade-count"]) {
