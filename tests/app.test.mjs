@@ -67,6 +67,14 @@ test("semester page has one live records container", () => {
   const page = readFileSync(new URL("../semesters.html", import.meta.url), "utf8");
   assert.equal((page.match(/id="semester-summary"/g) || []).length, 1);
   assert.match(page, /Manage subjects/);
+  assert.match(page, /id="semester-summary"[^>]*aria-live="polite"/);
+});
+
+test("dashboard summary values announce updates to assistive technology", () => {
+  const page = readFileSync(new URL("../dashboard.html", import.meta.url), "utf8");
+  for (const id of ["subject-count", "attendance-average", "grade-count"]) {
+    assert.match(page, new RegExp(`id="${id}" aria-live="polite"`));
+  }
 });
 
 test("hides CSV export until at least one subject exists", () => {
