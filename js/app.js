@@ -5,9 +5,12 @@
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
   const normalise = (item) => {
     const finiteCount = (value) => {
-      const number = Number(value);
-      const whole = Math.floor(number);
-      return Number.isSafeInteger(whole) ? Math.max(0, whole) : 0;
+      const number = typeof value === "number"
+        ? value
+        : typeof value === "string" && value.trim() !== ""
+          ? Number(value)
+          : NaN;
+      return Number.isSafeInteger(number) ? Math.max(0, number) : 0;
     };
     const total = finiteCount(item?.total);
     const attended = Math.min(finiteCount(item?.attended), total);
