@@ -109,6 +109,16 @@ test("rejects attended classes greater than total", () => {
 });
 
 
+test("rejects class counts outside the safe integer range", () => {
+  const { element, store } = setup([]);
+  element("subject-name").value = "Oversized record";
+  element("attended").value = "9007199254740992";
+  element("total").value = "9007199254740992";
+  element("subject-form").listeners.submit({ preventDefault() {} });
+  assert.match(element("form-message").textContent, /valid whole numbers/);
+  assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 0);
+});
+
 test("asks before removing a subject and preserves it when cancelled", () => {
   const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }], false);
   element("subject-list").listeners.click({
