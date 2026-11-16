@@ -3,13 +3,25 @@
   const KEY = "daigaku.subjects.v1";
   const $ = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
-  const normalise = (item) => ({
-    name: String(item?.name ?? "").trim().slice(0,70),
-    attended: Math.max(0, Math.floor(Number(item?.attended) || 0)),
-    total: Math.max(0, Math.floor(Number(item?.total) || 0)),
-    grade: String(item?.grade ?? ""),
-    semester: String(item?.semester ?? "Current semester")
-  });
+  const normalise = (item) => {
+    const finiteCount = (value) => {
+      const number = Number(value);
+      return Number.isFinite(number) ? Math.max(0, Math.floor(number)) : 0;
+    };
+    const total = finiteCount(item?.total);
+    const attended = Math.min(finiteCount(item?.attended), total);
+    const allowedGrades = new Set(["", "O", "A+", "A", "B+", "B", "C", "F"]);
+    const grade = String(item?.grade ?? "");
+    const semester = String(item?.semester ?? "Current semester");
+    const validSemester = semester === "Current semester" || /^Semester [1-8]$/.test(semester);
+    return {
+      name: String(item?.name ?? "").trim().slice(0,70),
+      attended,
+      total,
+      grade: allowedGrades.has(grade) ? grade : "",
+      semester: validSemester ? semester : "Current semester"
+    };
+  };
   const read = () => {
     try {
       const value = JSON.parse(localStorage.getItem(KEY) || "[]");
