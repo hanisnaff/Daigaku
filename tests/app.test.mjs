@@ -169,7 +169,7 @@ test("does not partially apply CSV imports when browser storage fails", async ()
   await element("import-file").listeners.change({ target: element("import-file") });
   assert.equal(element("subject-count").textContent, "0");
   assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 0);
-  assert.match(element("form-message").textContent, /could not save imported records/i);
+  assert.match(element("form-message").textContent, /could not save the imported records/i);
 });
 
 test("rejects malformed CSV without changing existing records", async () => {
