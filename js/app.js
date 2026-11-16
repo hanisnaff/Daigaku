@@ -124,6 +124,7 @@
     if (!button) return;
     const index = Number(button.dataset.remove);
     if (!Number.isInteger(index) || index < 0 || index >= subjects.length) return;
+    if (!window.confirm(`Remove ${subjects[index].name} from your subjects?`)) return;
     const next = subjects.filter((_,i) => i !== index);
     if (!write(next)) {
       const message = $("form-message");
