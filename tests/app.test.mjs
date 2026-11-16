@@ -140,7 +140,7 @@ test("removes a subject after confirmation", () => {
 
 test("exports subject records as CSV and neutralises spreadsheet formulas", () => {
   const { element, downloads } = setup([
-    { name: 'Software Engineering', attended: 8, total: 10, grade: 'A', semester: 'Semester 5' },
+    { name: 'Software Engineering, "Core"', attended: 8, total: 10, grade: 'A', semester: 'Semester 5' },
     { name: '=HYPERLINK("https://example.com")', attended: 1, total: 2, grade: '', semester: 'Semester 5' },
   ]);
   assert.equal(element("export-subjects").hidden, false);
@@ -148,7 +148,7 @@ test("exports subject records as CSV and neutralises spreadsheet formulas", () =
   assert.equal(downloads.length, 1);
   assert.equal(downloads[0].download, "daigaku-subjects.csv");
   const csv = decodeURIComponent(downloads[0].href.split(",").slice(1).join(",")).replace(/^\\uFEFF/, "");
-  assert.match(csv, /"Software Engineering","Semester 5","8","10","80%","A"/);
+  assert.match(csv, /"Software Engineering, ""Core""","Semester 5","8","10","80%","A"/);
   assert.match(csv, /"'=HYPERLINK\(""https:\/\/example\.com""\)"/);
   assert.match(csv, /"Subject","Semester"/);
 });
