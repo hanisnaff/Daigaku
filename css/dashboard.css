@@ -1,12 +1,2 @@
-.card {
-  border: 1px solid #ccc;
-  padding: 16px;
-  border-radius: 8px;
-  background: #f9f9f9;
-  flex: 1 1 200px;
-}
-.stats-grid {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
+.dashboard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:26px 0}.stat{background:#fff;border:1px solid #e2e8e2;border-radius:14px;padding:18px}.stat-label{font-size:12px;color:#718077;font-weight:600}.stat-value{font-size:26px;font-weight:750;letter-spacing:-.8px;margin-top:7px}.content-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.8fr);gap:16px;align-items:start}.section-heading{font-size:17px;margin:0 0 16px}.subject-list{display:grid;gap:10px}.subject-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid #edf0ed}.subject-row:last-child{border:0}.subject-name{font-weight:650}.subject-meta{font-size:12px;color:#748078;margin-top:3px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;color:#68766d;font-weight:650}.field input,.field select{width:100%;border:1px solid #dfe6df;border-radius:9px;padding:10px 11px;background:#fff;color:#202923}.form-actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}.empty-state{padding:22px;border:1px dashed #d5dfd6;border-radius:12px;color:#748078;font-size:14px;text-align:center}.attendance{font-size:12px;font-weight:700;color:#285443;background:#edf3ee;padding:5px 8px;border-radius:20px;white-space:nowrap}.semester-list{display:grid;gap:12px}.semester-card{display:flex;justify-content:space-between;align-items:center;gap:16px}.semester-card h3{margin:0;font-size:16px}.semester-card p{margin:5px 0 0;font-size:13px;color:#718077}
+@media(max-width:760px){.dashboard-grid{grid-template-columns:1fr 1fr}.content-grid{grid-template-columns:1fr}}@media(max-width:460px){.dashboard-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}}
