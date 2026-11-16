@@ -7,6 +7,7 @@ const appSource = readFileSync(new URL("../js/app.js", import.meta.url), "utf8")
 
 function setup(initialSubjects = [], confirmResult = true) {
   const elements = new Map();
+  const downloads = [];
   const element = (id) => {
     if (!elements.has(id)) {
       elements.set(id, {
@@ -25,7 +26,7 @@ function setup(initialSubjects = [], confirmResult = true) {
     return elements.get(id);
   };
 
-  for (const id of ["subject-list", "subject-count", "attendance-average", "grade-count", "subject-form", "form-message", "subject-name", "attended", "total", "grade", "semester", "submit-subject", "cancel-edit", "semester-summary"]) element(id);
+  for (const id of ["subject-list", "subject-count", "attendance-average", "grade-count", "subject-form", "form-message", "subject-name", "attended", "total", "grade", "semester", "submit-subject", "cancel-edit", "semester-summary", "export-subjects"]) element(id);
   element("submit-subject").textContent = "Add subject";
   const store = new Map([["daigaku.subjects.v1", JSON.stringify(initialSubjects)]]);
   class FormDataMock {
@@ -36,7 +37,7 @@ function setup(initialSubjects = [], confirmResult = true) {
     }
   }
   const context = {
-    document: { getElementById: element },
+    document: { getElementById: element, createElement() { return { click() { downloads.push(this); }, remove() {} }; }, body: { appendChild() {} } },
     localStorage: {
       getItem(key) { return store.has(key) ? store.get(key) : null; },
       setItem(key, value) { store.set(key, value); },
@@ -45,7 +46,7 @@ function setup(initialSubjects = [], confirmResult = true) {
     window: { confirm() { return confirmResult; } },
   };
   vm.runInNewContext(appSource, context);
-  return { element, store };
+  return { element, store, downloads };
 }
 
 test("loads old records and calculates weighted attendance", () => {
@@ -107,4 +108,20 @@ test("removes a subject after confirmation", () => {
   });
   assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 0);
   assert.equal(element("subject-count").textContent, "0");
+});
+
+
+test("exports subject records as CSV and neutralises spreadsheet formulas", () => {
+  const { element, downloads } = setup([
+    { name: 'Software Engineering', attended: 8, total: 10, grade: 'A', semester: 'Semester 5' },
+    { name: '=HYPERLINK("https://example.com")', attended: 1, total: 2, grade: '', semester: 'Semester 5' },
+  ]);
+  assert.equal(element("export-subjects").hidden, false);
+  element("export-subjects").listeners.click();
+  assert.equal(downloads.length, 1);
+  assert.equal(downloads[0].download, "daigaku-subjects.csv");
+  const csv = decodeURIComponent(downloads[0].href.split(",").slice(1).join(",")).replace(/^\\uFEFF/, "");
+  assert.match(csv, /"Software Engineering","Semester 5",8,10,"80%","A"/);
+  assert.match(csv, /"'=HYPERLINK\(""https:\/\/example\.com""\)"/);
+  assert.match(csv, /Subject,Semester/);
 });
