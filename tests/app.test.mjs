@@ -159,6 +159,19 @@ test("rejects CSV backups with more than 5,000 subject rows", async () => {
   assert.match(element("form-message").textContent, /at most 5,000/);
 });
 
+test("does not partially apply CSV imports when browser storage fails", async () => {
+  const { element, store } = setup([], true, true);
+  const csv = [
+    '"Subject","Semester","Classes attended","Total classes","Attendance","Grade"',
+    '"Algorithms","Semester 3","2","3","67%","A"',
+  ].join("\r\n");
+  element("import-file").files = [{ size: csv.length, async text() { return csv; } }];
+  await element("import-file").listeners.change({ target: element("import-file") });
+  assert.equal(element("subject-count").textContent, "0");
+  assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 0);
+  assert.match(element("form-message").textContent, /could not save imported records/i);
+});
+
 test("rejects malformed CSV without changing existing records", async () => {
   const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }]);
   const before = store.get("daigaku.subjects.v1");
