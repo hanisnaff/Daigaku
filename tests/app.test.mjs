@@ -125,3 +125,15 @@ test("exports subject records as CSV and neutralises spreadsheet formulas", () =
   assert.match(csv, /"'=HYPERLINK\(""https:\/\/example\.com""\)"/);
   assert.match(csv, /"Subject","Semester"/);
 });
+
+
+test("prevents duplicate subject names within the same semester", () => {
+  const { element, store } = setup([{ name: "Software Engineering", attended: 0, total: 0, semester: "Semester 5" }]);
+  element("subject-name").value = "software engineering";
+  element("attended").value = "0";
+  element("total").value = "0";
+  element("semester").value = "Semester 5";
+  element("subject-form").listeners.submit({ preventDefault() {} });
+  assert.match(element("form-message").textContent, /already exists in this semester/);
+  assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 1);
+});
