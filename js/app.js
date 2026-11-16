@@ -37,7 +37,7 @@
     let row = [];
     let field = "";
     let quoted = false;
-    const input = String(source).replace(/^\\uFEFF/, "");
+    const input = String(source).replace(/^\uFEFF/, "");
 
     for (let index = 0; index < input.length; index += 1) {
       const character = input[index];
@@ -55,12 +55,12 @@
       } else if (character === ",") {
         row.push(field);
         field = "";
-      } else if (character === "\\r" || character === "\\n") {
+      } else if (character === "\r" || character === "\n") {
         row.push(field);
         rows.push(row);
         row = [];
         field = "";
-        if (character === "\\r" && input[index + 1] === "\\n") index += 1;
+        if (character === "\r" && input[index + 1] === "\n") index += 1;
       } else {
         field += character;
       }
