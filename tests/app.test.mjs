@@ -328,6 +328,7 @@ test("skips invalid and duplicate CSV rows while importing valid records", async
   const csv = "Subject,Semester,Classes attended,Total classes,Attendance,Grade\r\n"
     + "Existing,Semester 2,2,3,67%,A\r\n"
     + "Broken,Semester 9,1,2,50%,A\r\n"
+    + "\"Bad\nName\",Semester 3,1,2,50%,A\r\n"
     + "New subject,Semester 3,1,2,50%,B+";
   const fileInput = element("import-file");
   fileInput.files = [{ size: csv.length, text: async () => csv }];
@@ -335,7 +336,7 @@ test("skips invalid and duplicate CSV rows while importing valid records", async
   const saved = JSON.parse(store.get("daigaku.subjects.v1"));
   assert.equal(saved.length, 2);
   assert.equal(saved[1].name, "New subject");
-  assert.match(element("form-message").textContent, /Imported 1 subject; skipped 2 invalid or duplicate rows/);
+  assert.match(element("form-message").textContent, /Imported 1 subject; skipped 3 invalid or duplicate rows/);
 });
 
 test("rejects non-Daigaku CSV files without changing existing records", async () => {
