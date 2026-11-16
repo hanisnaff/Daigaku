@@ -305,6 +305,58 @@ test("exports subject records as CSV and neutralises spreadsheet formulas", () =
 });
 
 
+
+test("imports a CSV backup with quoted commas and escaped quotes", async () => {
+  const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }]);
+  const csv = "\uFEFFSubject,Semester,Classes attended,Total classes,Attendance,Grade\r\n"
+    + "\"Software Engineering, \"\"Core\"\"\",Semester 5,8,10,80%,A";
+  const fileInput = element("import-file");
+  fileInput.files = [{ size: csv.length, text: async () => csv }];
+  element("import-subjects").listeners.click();
+  assert.equal(fileInput.clicked, true);
+  await fileInput.listeners.change({ target: fileInput });
+  const saved = JSON.parse(store.get("daigaku.subjects.v1"));
+  assert.equal(saved.length, 2);
+  assert.equal(saved[1].name, 'Software Engineering, "Core"');
+  assert.equal(saved[1].semester, "Semester 5");
+  assert.match(element("form-message").textContent, /Imported 1 subject/);
+  assert.equal(fileInput.value, "");
+});
+
+test("skips invalid and duplicate CSV rows while importing valid records", async () => {
+  const { element, store } = setup([{ name: "Existing", attended: 2, total: 3, semester: "Semester 2" }]);
+  const csv = "Subject,Semester,Classes attended,Total classes,Attendance,Grade\r\n"
+    + "Existing,Semester 2,2,3,67%,A\r\n"
+    + "Broken,Semester 9,1,2,50%,A\r\n"
+    + "New subject,Semester 3,1,2,50%,B+";
+  const fileInput = element("import-file");
+  fileInput.files = [{ size: csv.length, text: async () => csv }];
+  await fileInput.listeners.change({ target: fileInput });
+  const saved = JSON.parse(store.get("daigaku.subjects.v1"));
+  assert.equal(saved.length, 2);
+  assert.equal(saved[1].name, "New subject");
+  assert.match(element("form-message").textContent, /Imported 1 subject; skipped 2 invalid or duplicate rows/);
+});
+
+test("rejects non-Daigaku CSV files without changing existing records", async () => {
+  const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }]);
+  const fileInput = element("import-file");
+  fileInput.files = [{ size: 40, text: async () => "Name,Score\r\nAlgorithms,90" }];
+  await fileInput.listeners.change({ target: fileInput });
+  assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 1);
+  assert.match(element("form-message").textContent, /not a Daigaku subject backup CSV/);
+});
+
+test("rejects CSV backups larger than 1 MB", async () => {
+  const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }]);
+  const fileInput = element("import-file");
+  fileInput.files = [{ size: 1_000_001, text: async () => { throw new Error("Should not read oversized file"); } }];
+  await fileInput.listeners.change({ target: fileInput });
+  assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 1);
+  assert.match(element("form-message").textContent, /1 MB or smaller/);
+  assert.equal(fileInput.value, "");
+});
+
 test("prevents duplicate subject names within the same semester", () => {
   const { element, store } = setup([{ name: "Software Engineering", attended: 0, total: 0, semester: "Semester 5" }]);
   element("subject-name").value = "software engineering";
