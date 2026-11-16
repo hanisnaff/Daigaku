@@ -49,6 +49,12 @@ function setup(initialSubjects = [], confirmResult = true) {
   return { element, store, downloads };
 }
 
+test("semester page has one live records container", () => {
+  const page = readFileSync(new URL("../semesters.html", import.meta.url), "utf8");
+  assert.equal((page.match(/id="semester-summary"/g) || []).length, 1);
+  assert.match(page, /Manage subjects/);
+});
+
 test("loads old records and calculates weighted attendance", () => {
   const { element } = setup([
     { name: "C++", attended: 8, total: 10, grade: "A" },
