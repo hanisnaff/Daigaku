@@ -21,12 +21,13 @@ function setup(initialSubjects = [], confirmResult = true, storageWriteFails = f
           if (elements.has("semester")) elements.get("semester").value = "Current semester";
         },
         focus() {},
+        click() { this.clicked = true; },
       });
     }
     return elements.get(id);
   };
 
-  for (const id of ["subject-list", "subject-count", "attendance-average", "grade-count", "subject-form", "form-message", "subject-name", "attended", "total", "grade", "semester", "submit-subject", "cancel-edit", "semester-summary", "export-subjects", "subject-search"]) element(id);
+  for (const id of ["subject-list", "subject-count", "attendance-average", "grade-count", "subject-form", "form-message", "subject-name", "attended", "total", "grade", "semester", "submit-subject", "cancel-edit", "semester-summary", "export-subjects", "import-subjects", "import-file", "subject-search"]) element(id);
   element("submit-subject").textContent = "Add subject";
   const initialValue = typeof initialSubjects === "string" ? initialSubjects : JSON.stringify(initialSubjects);
   const store = new Map([["daigaku.subjects.v1", initialValue]]);
@@ -75,6 +76,45 @@ test("dashboard summary values announce updates to assistive technology", () => 
   for (const id of ["subject-count", "attendance-average", "grade-count"]) {
     assert.match(page, new RegExp(`id="${id}" aria-live="polite"`));
   }
+});
+
+test("opens the CSV file picker from the import button", () => {
+  const { element } = setup([]);
+  element("import-subjects").listeners.click();
+  assert.equal(element("import-file").clicked, true);
+});
+
+test("imports CSV backups, parses quoted names, and skips duplicates or invalid rows", async () => {
+  const { element, store } = setup([
+    { name: "C++", attended: 8, total: 10, semester: "Semester 5" },
+  ]);
+  const csv = "\uFEFF" + [
+    '"Subject","Semester","Classes attended","Total classes","Attendance","Grade"',
+    '"Data Structures, ""Advanced""","Semester 5","8","10","80%","A+"',
+    '"C++","Semester 5","4","5","80%","A"',
+    '"Broken","Semester 6","5","4","125%","B"',
+  ].join("\r\n");
+  element("import-file").files = [{ async text() { return csv; } }];
+  element("import-file").value = "backup.csv";
+  await element("import-file").listeners.change({ target: element("import-file") });
+
+  const saved = JSON.parse(store.get("daigaku.subjects.v1"));
+  assert.equal(saved.length, 2);
+  assert.equal(saved[1].name, 'Data Structures, "Advanced"');
+  assert.equal(saved[1].attended, 8);
+  assert.equal(saved[1].grade, "A+");
+  assert.match(element("subject-list").innerHTML, /Data Structures, &quot;Advanced&quot;/);
+  assert.match(element("form-message").textContent, /Imported 1 subject; skipped 2/);
+  assert.equal(element("import-file").value, "");
+});
+
+test("rejects malformed CSV without changing existing records", async () => {
+  const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }]);
+  const before = store.get("daigaku.subjects.v1");
+  element("import-file").files = [{ async text() { return '"Subject","Semester'; } }];
+  await element("import-file").listeners.change({ target: element("import-file") });
+  assert.equal(store.get("daigaku.subjects.v1"), before);
+  assert.match(element("form-message").textContent, /unfinished quoted field/);
 });
 
 test("hides CSV export until at least one subject exists", () => {
