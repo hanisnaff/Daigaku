@@ -239,8 +239,8 @@
           const total = Number(rawTotal);
           const grade = String(rawGrade ?? "").trim();
           const validSemester = semester === "Current semester" || /^Semester [1-8]$/.test(semester);
-          const validCounts = /^\\d+$/.test(rawAttended)
-            && /^\\d+$/.test(rawTotal)
+          const validCounts = /^\d+$/.test(rawAttended)
+            && /^\d+$/.test(rawTotal)
             && Number.isSafeInteger(attended)
             && Number.isSafeInteger(total)
             && attended <= total;
