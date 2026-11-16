@@ -24,35 +24,6 @@
   let editingIndex = null;
 
   function renderDashboard() {
-    const exportButton = $("export-subjects");
-  if (exportButton) exportButton.addEventListener("click", () => {
-    if (!subjects.length) return;
-    const csvCell = (value) => {
-      let text = String(value ?? "");
-      if (/^\\s*[=+\\-@]/.test(text)) text = "'" + text;
-      return '"' + text.replace(/"/g, '""') + '"';
-    };
-    const rows = [
-      ["Subject", "Semester", "Classes attended", "Total classes", "Attendance", "Grade"],
-      ...subjects.map((subject) => [
-        subject.name,
-        subject.semester,
-        subject.attended,
-        subject.total,
-        subject.total ? Math.round(subject.attended / subject.total * 100) + "%" : "",
-        subject.grade,
-      ]),
-    ];
-    const csv = rows.map((row) => row.map(csvCell).join(",")).join("\\r\\n");
-    const download = document.createElement("a");
-    download.href = "data:text/csv;charset=utf-8,\\uFEFF" + encodeURIComponent(csv);
-    download.download = "daigaku-subjects.csv";
-    download.hidden = true;
-    document.body.appendChild(download);
-    download.click();
-    download.remove();
-  });
-
   const list = $("subject-list");
     if (!list) return;
     const count = $("subject-count");
@@ -128,6 +99,35 @@
       renderSemesters();
     });
   }
+
+  const exportButton = $("export-subjects");
+  if (exportButton) exportButton.addEventListener("click", () => {
+    if (!subjects.length) return;
+    const csvCell = (value) => {
+      let text = String(value ?? "");
+      if (/^\s*[=+\-@]/.test(text)) text = "'" + text;
+      return '"' + text.replace(/"/g, '""') + '"';
+    };
+    const rows = [
+      ["Subject", "Semester", "Classes attended", "Total classes", "Attendance", "Grade"],
+      ...subjects.map((subject) => [
+        subject.name,
+        subject.semester,
+        subject.attended,
+        subject.total,
+        subject.total ? Math.round(subject.attended / subject.total * 100) + "%" : "",
+        subject.grade,
+      ]),
+    ];
+    const csv = rows.map((row) => row.map(csvCell).join(",")).join("\r\n");
+    const download = document.createElement("a");
+    download.href = "data:text/csv;charset=utf-8,\uFEFF" + encodeURIComponent(csv);
+    download.download = "daigaku-subjects.csv";
+    download.hidden = true;
+    document.body.appendChild(download);
+    download.click();
+    download.remove();
+  });
 
   const list = $("subject-list");
   if (list) list.addEventListener("click", (event) => {
