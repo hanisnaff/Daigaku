@@ -137,3 +137,15 @@ test("prevents duplicate subject names within the same semester", () => {
   assert.match(element("form-message").textContent, /already exists in this semester/);
   assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 1);
 });
+
+
+test("allows the same subject name in a different semester", () => {
+  const { element, store } = setup([{ name: "Mathematics", attended: 8, total: 10, semester: "Semester 4" }]);
+  element("subject-name").value = "Mathematics";
+  element("attended").value = "0";
+  element("total").value = "0";
+  element("semester").value = "Semester 5";
+  element("subject-form").listeners.submit({ preventDefault() {} });
+  assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 2);
+  assert.equal(element("subject-count").textContent, "2");
+});
