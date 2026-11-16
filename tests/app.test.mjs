@@ -361,6 +361,18 @@ test("rejects non-Daigaku CSV files without changing existing records", async ()
   assert.match(element("form-message").textContent, /not a Daigaku subject backup CSV/);
 });
 
+
+test("rejects malformed quoting in CSV backups", async () => {
+  const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }]);
+  const csv = "Subject,Semester,Classes attended,Total classes,Attendance,Grade\r\n"
+    + "\"Broken\"extra,Semester 5,8,10,80%,A";
+  const fileInput = element("import-file");
+  fileInput.files = [{ size: csv.length, text: async () => csv }];
+  await fileInput.listeners.change({ target: fileInput });
+  assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 1);
+  assert.match(element("form-message").textContent, /invalid characters after a quoted field/);
+});
+
 test("rejects CSV backups larger than 1 MB", async () => {
   const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }]);
   const fileInput = element("import-file");
