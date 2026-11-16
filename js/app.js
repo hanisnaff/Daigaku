@@ -78,6 +78,8 @@
       if (!Number.isInteger(attended) || !Number.isInteger(total) || attended < 0 || total < 0) return fail("Enter valid whole numbers for class counts.");
       if (attended > total) return fail("Classes attended cannot be greater than total classes.");
       const entry = normalise({name, attended, total, grade:data.get("grade"), semester:data.get("semester")});
+      const duplicateIndex = subjects.findIndex((subject, index) => index !== editingIndex && subject.name.toLocaleLowerCase() === entry.name.toLocaleLowerCase() && subject.semester === entry.semester);
+      if (duplicateIndex !== -1) return fail("That subject already exists in this semester.");
       const next = subjects.slice();
       if (editingIndex === null) next.push(entry);
       else next[editingIndex] = entry;
