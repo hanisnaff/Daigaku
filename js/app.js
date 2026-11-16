@@ -37,6 +37,7 @@
     let row = [];
     let field = "";
     let quoted = false;
+    let closedQuote = false;
     const input = String(source).replace(/^\uFEFF/, "");
 
     for (let index = 0; index < input.length; index += 1) {
@@ -47,10 +48,27 @@
           index += 1;
         } else if (character === '"') {
           quoted = false;
+          closedQuote = true;
         } else {
           field += character;
         }
-      } else if (character === '"' && field === "") {
+      } else if (closedQuote) {
+        if (character === ",") {
+          row.push(field);
+          field = "";
+          closedQuote = false;
+        } else if (character === "\r" || character === "\n") {
+          row.push(field);
+          rows.push(row);
+          row = [];
+          field = "";
+          closedQuote = false;
+          if (character === "\r" && input[index + 1] === "\n") index += 1;
+        } else if (!/\s/.test(character)) {
+          throw new Error("The CSV file has invalid characters after a quoted field.");
+        }
+      } else if (character === '"') {
+        if (field !== "") throw new Error("The CSV file has an unexpected quote in an unquoted field.");
         quoted = true;
       } else if (character === ",") {
         row.push(field);
