@@ -28,7 +28,7 @@ Then open the local URL printed by the server.
 
 ## Data and privacy
 
-Current subject records are stored in the browser's `localStorage` on the device and browser where they were entered. There is no account system or cloud sync in this version. Clearing site data or changing browsers can remove or hide those records, so use **Export CSV** to keep a backup. The Vercel deployment also applies baseline browser security headers for content-type handling, referrer policy, framing, and unused device permissions.
+Current subject records are stored in the browser's `localStorage` on the device and browser where they were entered. There is no account system or cloud sync in this version. Clearing site data or changing browsers can remove or hide those records, so use **Export CSV** to keep a backup. Browser localStorage is not encrypted; avoid entering sensitive personal identifiers or using the app in an untrusted shared browser profile. The Vercel deployment also applies baseline browser security headers for content-type handling, referrer policy, framing, and unused device permissions.
 
 ## Checks
 
