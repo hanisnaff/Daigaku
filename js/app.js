@@ -6,7 +6,8 @@
   const normalise = (item) => {
     const finiteCount = (value) => {
       const number = Number(value);
-      return Number.isFinite(number) ? Math.max(0, Math.floor(number)) : 0;
+      const whole = Math.floor(number);
+      return Number.isSafeInteger(whole) ? Math.max(0, whole) : 0;
     };
     const total = finiteCount(item?.total);
     const attended = Math.min(finiteCount(item?.attended), total);
@@ -87,7 +88,7 @@
       const message = $("form-message");
       const fail = (text) => { if (message) message.textContent = text; };
       if (!name) return fail("Enter a subject name.");
-      if (!Number.isInteger(attended) || !Number.isInteger(total) || attended < 0 || total < 0) return fail("Enter valid whole numbers for class counts.");
+      if (!Number.isSafeInteger(attended) || !Number.isSafeInteger(total) || attended < 0 || total < 0) return fail("Enter valid whole numbers for class counts.");
       if (attended > total) return fail("Classes attended cannot be greater than total classes.");
       const entry = normalise({name, attended, total, grade:data.get("grade"), semester:data.get("semester")});
       const duplicateIndex = subjects.findIndex((subject, index) => index !== editingIndex && subject.name.toLocaleLowerCase() === entry.name.toLocaleLowerCase() && subject.semester === entry.semester);
