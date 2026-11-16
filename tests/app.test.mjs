@@ -109,6 +109,20 @@ test("imports CSV backups, parses quoted names, and skips duplicates or invalid 
   assert.equal(element("import-file").value, "");
 });
 
+test("rejects CSV backups larger than 1 MB before reading them", async () => {
+  const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }]);
+  const before = store.get("daigaku.subjects.v1");
+  element("import-file").files = [{
+    size: 1_000_001,
+    async text() { throw new Error("The oversized file should not be read."); },
+  }];
+  element("import-file").value = "large.csv";
+  await element("import-file").listeners.change({ target: element("import-file") });
+  assert.equal(store.get("daigaku.subjects.v1"), before);
+  assert.match(element("form-message").textContent, /1 MB or smaller/);
+  assert.equal(element("import-file").value, "");
+});
+
 test("rejects malformed CSV without changing existing records", async () => {
   const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }]);
   const before = store.get("daigaku.subjects.v1");
