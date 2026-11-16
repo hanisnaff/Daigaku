@@ -60,6 +60,7 @@
         } else if (character === "\r" || character === "\n") {
           row.push(field);
           rows.push(row);
+          if (rows.length > 5_001) throw new Error("A CSV backup can contain at most 5,000 subject rows.");
           row = [];
           field = "";
           closedQuote = false;
