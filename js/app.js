@@ -102,7 +102,7 @@
   let editingIndex = null;
 
   function renderDashboard() {
-  const list = $("subject-list");
+    const list = $("subject-list");
     if (!list) return;
     const count = $("subject-count");
     const attendance = $("attendance-average");
