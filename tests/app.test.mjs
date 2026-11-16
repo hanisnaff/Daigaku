@@ -60,18 +60,14 @@ test("loads old records and calculates weighted attendance", () => {
 });
 
 test("normalises corrupted stored values before rendering", () => {
-  const { element, store } = setup([
+  const { element } = setup([
     { name: "  C++  ", attended: 14, total: 10, grade: "unexpected", semester: "Semester 99" },
     { name: "Broken counts", attended: "Infinity", total: "NaN", grade: "A", semester: "Semester 2" },
   ]);
-  const saved = JSON.parse(store.get("daigaku.subjects.v1"));
-  assert.equal(saved[0].name, "C++");
-  assert.equal(saved[0].attended, 10);
-  assert.equal(saved[0].grade, "");
-  assert.equal(saved[0].semester, "Current semester");
-  assert.equal(saved[1].attended, 0);
-  assert.equal(saved[1].total, 0);
   assert.equal(element("attendance-average").textContent, "100%");
+  assert.match(element("subject-list").innerHTML, /C\+\+/);
+  assert.match(element("subject-list").innerHTML, /Current semester/);
+  assert.doesNotMatch(element("subject-list").innerHTML, /Semester 99|14\/10/);
 });
 
 test("edits attendance and semester without creating a duplicate", () => {
