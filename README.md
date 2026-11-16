@@ -10,6 +10,8 @@ Daigaku is a lightweight student dashboard for keeping track of subjects, attend
 - Calculate overall attendance using total classes, not an average of subject percentages
 - Record grades and group subjects by semester
 - Export subject records as CSV for backup or spreadsheet use
+- Prevent duplicate subject names within the same semester
+- Validate legacy or malformed stored records and safely escape subject text
 - Keep existing records compatible when the app is updated
 
 ## Run locally
