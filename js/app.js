@@ -223,6 +223,9 @@
         if (!header || expectedHeader.some((value, index) => header[index] !== value) || header.length !== expectedHeader.length) {
           throw new Error("This is not a Daigaku subject backup CSV.");
         }
+        if (rows.length > 5_000) {
+          throw new Error("A CSV backup can contain at most 5,000 subject rows.");
+        }
 
         const existing = new Set(subjects.map((subject) => subject.name.toLocaleLowerCase() + "|" + subject.semester));
         const next = subjects.slice();
