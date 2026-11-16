@@ -49,10 +49,17 @@
     const total = subjects.reduce((sum,s) => sum + s.total, 0);
     if (attendance) attendance.textContent = total ? Math.round(attended / total * 100) + "%" : "—";
     if (grades) grades.textContent = String(subjects.filter(s => s.grade).length);
-    list.innerHTML = subjects.length ? subjects.map((s,i) => {
+    const searchInput = $("subject-search");
+    const query = searchInput ? searchInput.value.trim().toLocaleLowerCase() : "";
+    const visibleSubjects = subjects
+      .map((subject, index) => ({ subject, index }))
+      .filter(({ subject }) => !query || subject.name.toLocaleLowerCase().includes(query));
+    list.innerHTML = visibleSubjects.length ? visibleSubjects.map(({ subject: s, index: i }) => {
       const pct = s.total > 0 ? Math.round(s.attended / s.total * 100) : null;
       return '<article class="subject-row"><div class="subject-details"><div class="subject-name">'+escapeHtml(s.name)+'</div><div class="subject-meta">'+escapeHtml(s.semester)+' · '+(s.grade ? "Grade: "+escapeHtml(s.grade)+" · " : "")+(pct === null ? "Attendance not added" : escapeHtml(s.attended)+"/"+escapeHtml(s.total)+" classes")+'</div></div><div class="subject-actions" style="display:flex;align-items:center;gap:8px"><span class="attendance">'+(pct === null ? "—" : pct+"%")+'</span><button class="btn secondary" type="button" data-edit="'+i+'" aria-label="Edit '+escapeHtml(s.name)+'" style="padding:7px 9px;font-size:12px">Edit</button><button class="btn secondary" type="button" data-remove="'+i+'" aria-label="Remove '+escapeHtml(s.name)+'" style="padding:7px 9px;font-size:12px">Remove</button></div></article>';
-    }).join("") : '<div class="empty-state">No subjects yet. Add your first subject using the form.</div>';
+    }).join("") : query
+      ? '<div class="empty-state">No subjects match your search.</div>'
+      : '<div class="empty-state">No subjects yet. Add your first subject using the form.</div>';
   }
 
   function renderSemesters() {
@@ -114,6 +121,9 @@
       renderSemesters();
     });
   }
+
+  const searchInput = $("subject-search");
+  if (searchInput) searchInput.addEventListener("input", renderDashboard);
 
   const exportButton = $("export-subjects");
   if (exportButton) exportButton.addEventListener("click", () => {
