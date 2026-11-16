@@ -55,6 +55,13 @@ function setup(initialSubjects = [], confirmResult = true, storageWriteFails = f
   return { element, store, downloads };
 }
 
+test("dashboard exposes CSV import and export controls", () => {
+  const page = readFileSync(new URL("../dashboard.html", import.meta.url), "utf8");
+  assert.match(page, /id="import-subjects"/);
+  assert.match(page, /id="import-file"/);
+  assert.match(page, /id="export-subjects"/);
+});
+
 test("Vercel config applies baseline browser security headers", () => {
   const config = JSON.parse(readFileSync(new URL("../vercel.json", import.meta.url), "utf8"));
   const headers = config.headers?.find((rule) => rule.source === "/(.*)")?.headers ?? [];
