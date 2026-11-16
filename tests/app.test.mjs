@@ -211,7 +211,9 @@ test("exports subject records as CSV and neutralises spreadsheet formulas", () =
   element("export-subjects").listeners.click();
   assert.equal(downloads.length, 1);
   assert.equal(downloads[0].download, "daigaku-subjects.csv");
-  const csv = decodeURIComponent(downloads[0].href.split(",").slice(1).join(",")).replace(/^\\uFEFF/, "");
+  const decodedCsv = decodeURIComponent(downloads[0].href.split(",").slice(1).join(","));
+  assert.equal(decodedCsv.charCodeAt(0), 0xFEFF);
+  const csv = decodedCsv.replace(/^\uFEFF/, "");
   assert.match(csv, /"Software Engineering, ""Core""","Semester 5","8","10","80%","A"/);
   assert.match(csv, /"'=HYPERLINK\(""https:\/\/example\.com""\)"/);
   assert.match(csv, /"Subject","Semester"/);
