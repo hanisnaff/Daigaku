@@ -64,6 +64,7 @@ test("homepage explains CSV backup and restore", () => {
 test("dashboard exposes CSV import and export controls", () => {
   const page = readFileSync(new URL("../dashboard.html", import.meta.url), "utf8");
   assert.match(page, /id="import-subjects"/);
+  assert.match(page, /Appends valid new subjects without replacing existing records/);
   assert.match(page, /id="import-file"/);
   assert.match(page, /id="export-subjects"/);
 });
