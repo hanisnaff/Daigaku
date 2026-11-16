@@ -26,7 +26,7 @@ function setup(initialSubjects = [], confirmResult = true) {
     return elements.get(id);
   };
 
-  for (const id of ["subject-list", "subject-count", "attendance-average", "grade-count", "subject-form", "form-message", "subject-name", "attended", "total", "grade", "semester", "submit-subject", "cancel-edit", "semester-summary", "export-subjects"]) element(id);
+  for (const id of ["subject-list", "subject-count", "attendance-average", "grade-count", "subject-form", "form-message", "subject-name", "attended", "total", "grade", "semester", "submit-subject", "cancel-edit", "semester-summary", "export-subjects", "subject-search"]) element(id);
   element("submit-subject").textContent = "Add subject";
   const store = new Map([["daigaku.subjects.v1", JSON.stringify(initialSubjects)]]);
   class FormDataMock {
@@ -63,6 +63,22 @@ test("loads old records and calculates weighted attendance", () => {
   assert.equal(element("subject-count").textContent, "2");
   assert.equal(element("attendance-average").textContent, "67%");
   assert.match(element("semester-summary").innerHTML, /Current semester/);
+});
+
+test("filters dashboard subjects without changing semester totals", () => {
+  const { element } = setup([
+    { name: "C++", attended: 8, total: 10, semester: "Semester 5" },
+    { name: "Data Structures", attended: 4, total: 5, semester: "Semester 5" },
+  ]);
+  element("subject-search").value = "data";
+  element("subject-search").listeners.input();
+  assert.match(element("subject-list").innerHTML, /Data Structures/);
+  assert.doesNotMatch(element("subject-list").innerHTML, /C\+\+/);
+  assert.match(element("semester-summary").innerHTML, /C\+\+/);
+  assert.equal(element("subject-count").textContent, "2");
+  element("subject-search").value = "no match";
+  element("subject-search").listeners.input();
+  assert.match(element("subject-list").innerHTML, /No subjects match your search/);
 });
 
 test("normalises corrupted stored values before rendering", () => {
