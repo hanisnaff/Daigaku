@@ -10,6 +10,7 @@ Daigaku is a lightweight student dashboard for keeping track of subjects, attend
 - Calculate overall attendance using total classes, not an average of subject percentages
 - Record grades and group subjects by semester
 - Export subject records as CSV for backup or spreadsheet use
+- Import Daigaku CSV backups, validate rows, and skip duplicate or invalid records
 - Prevent duplicate subject names within the same semester
 - Validate legacy or malformed stored records and safely escape subject text
 - Keep existing records compatible when the app is updated
@@ -28,7 +29,7 @@ Then open the local URL printed by the server.
 
 ## Data and privacy
 
-Current subject records are stored in the browser's `localStorage` on the device and browser where they were entered. There is no account system or cloud sync in this version. Clearing site data or changing browsers can remove or hide those records, so use **Export CSV** to keep a backup. Browser localStorage is not encrypted; avoid entering sensitive personal identifiers or using the app in an untrusted shared browser profile. The Vercel deployment also applies baseline browser security headers for content-type handling, referrer policy, framing, and unused device permissions.
+Current subject records are stored in the browser's `localStorage` on the device and browser where they were entered. There is no account system or cloud sync in this version. Clearing site data or changing browsers can remove or hide those records, so use **Export CSV** to keep a backup and **Import CSV** to restore it in the same or another browser. Browser localStorage is not encrypted; avoid entering sensitive personal identifiers or using the app in an untrusted shared browser profile. The Vercel deployment also applies baseline browser security headers for content-type handling, referrer policy, framing, and unused device permissions.
 
 ## Checks
 
