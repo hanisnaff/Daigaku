@@ -1,42 +1,7 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Daigaku - Dashboard</title>
-    <link rel="stylesheet" href="css/base.css" />
-    <link rel="stylesheet" href="css/dashboard.css" />
-  </head>
-  <body>
-    <header>
-      <h1>Daigaku</h1>
-      <nav class="nav">
-        <ul class="nav-list">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="dashboard.html">Dashboard</a></li>
-          <li><a href="semesters.html">Semesters</a></li>
-        </ul>
-      </nav>
-    </header>
-    <main>
-      <h2>Welcome, Hitesh Jogeshwari!</h2>
-      <section class="stats-grid">
-        <article class="card">
-          <h3>current semester: 5th</h3>
-          <p>CGPA:8.9</p>
-        </article>
-        <article class="card">
-          <h3>Web</h3>
-          <p>Grade:O</p>
-        </article>
-        <article class="card">
-          <h3>Java</h3>
-          <p>Grade:O</p>
-        </article>
-      </section>
-    </main>
-    <footer>
-      <p>Copyright 2026 Daigaku</p>
-    </footer>
-  </body>
-</html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard — Daigaku</title><link rel="stylesheet" href="css/base.css"><link rel="stylesheet" href="css/dashboard.css"></head>
+<body><header class="site-header"><div class="header-inner"><a class="brand" href="index.html">daigaku</a><nav aria-label="Main navigation"><ul class="nav-list"><li><a href="index.html">Home</a></li><li><a href="dashboard.html" aria-current="page">Dashboard</a></li><li><a href="semesters.html">Semesters</a></li></ul></nav></div></header>
+<main><p class="eyebrow">Your overview</p><h1 class="page-title">Dashboard</h1><p class="muted">A quick look at your academic work. Add your subjects to get started.</p>
+<section class="dashboard-grid" aria-label="Academic summary"><article class="stat"><div class="stat-label">Subjects</div><div class="stat-value" id="subject-count">0</div></article><article class="stat"><div class="stat-label">Average attendance</div><div class="stat-value" id="attendance-average">—</div></article><article class="stat"><div class="stat-label">Grades recorded</div><div class="stat-value" id="grade-count">0</div></article></section>
+<div class="content-grid"><section class="panel"><h2 class="section-heading">Your subjects</h2><div id="subject-list" class="subject-list"><div class="empty-state">No subjects yet. Add your first subject using the form.</div></div></section>
+<section class="panel"><h2 class="section-heading">Add a subject</h2><form id="subject-form"><div class="form-grid"><div class="field full"><label for="subject-name">Subject name</label><input id="subject-name" name="name" placeholder="e.g. Software Engineering" required maxlength="70"></div><div class="field"><label for="attended">Classes attended</label><input id="attended" name="attended" type="number" min="0" value="0" required></div><div class="field"><label for="total">Total classes</label><input id="total" name="total" type="number" min="0" value="0" required></div><div class="field full"><label for="grade">Grade (optional)</label><select id="grade" name="grade"><option value="">Not received yet</option><option>O</option><option>A+</option><option>A</option><option>B+</option><option>B</option><option>C</option><option>F</option></select></div></div><div class="form-actions"><button class="btn" type="submit">Add subject</button></div><p id="form-message" class="muted" role="status" style="font-size:12px;margin:10px 0 0">Your entries stay in this browser.</p></form></section></div></main><footer class="site-footer">Daigaku · Your academic space</footer><script src="js/app.js" defer></script></body></html>
