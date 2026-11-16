@@ -198,6 +198,90 @@
     download.remove();
   });
 
+  const importInput = $("import-file");
+  const importButton = $("import-subjects");
+  if (importButton && importInput) {
+    importButton.addEventListener("click", () => importInput.click());
+  }
+  if (importInput) {
+    importInput.addEventListener("change", async (event) => {
+      const input = event.target;
+      const file = input.files?.[0];
+      if (!file) return;
+      const message = $("form-message");
+      const fail = (text) => { if (message) message.textContent = text; };
+
+      try {
+        const rows = parseCsv(await file.text());
+        const header = rows.shift();
+        const expectedHeader = ["Subject", "Semester", "Classes attended", "Total classes", "Attendance", "Grade"];
+        if (!header || expectedHeader.some((value, index) => header[index] !== value) || header.length !== expectedHeader.length) {
+          throw new Error("This is not a Daigaku subject backup CSV.");
+        }
+
+        const existing = new Set(subjects.map((subject) => subject.name.toLocaleLowerCase() + "|" + subject.semester));
+        const next = subjects.slice();
+        let imported = 0;
+        let skipped = 0;
+        const allowedGrades = new Set(["", "O", "A+", "A", "B+", "B", "C", "F"]);
+
+        for (const row of rows) {
+          if (row.length === 1 && !row[0].trim()) continue;
+          if (row.length !== expectedHeader.length) {
+            skipped += 1;
+            continue;
+          }
+
+          const [rawName, rawSemester, rawAttended, rawTotal, , rawGrade] = row;
+          const name = String(rawName ?? "").trim();
+          const semester = String(rawSemester ?? "").trim();
+          const attended = Number(rawAttended);
+          const total = Number(rawTotal);
+          const grade = String(rawGrade ?? "").trim();
+          const validSemester = semester === "Current semester" || /^Semester [1-8]$/.test(semester);
+          const validCounts = /^\\d+$/.test(rawAttended)
+            && /^\\d+$/.test(rawTotal)
+            && Number.isSafeInteger(attended)
+            && Number.isSafeInteger(total)
+            && attended <= total;
+
+          if (!name || name.length > 70 || !validSemester || !validCounts || !allowedGrades.has(grade)) {
+            skipped += 1;
+            continue;
+          }
+
+          const duplicateKey = name.toLocaleLowerCase() + "|" + semester;
+          if (existing.has(duplicateKey)) {
+            skipped += 1;
+            continue;
+          }
+          existing.add(duplicateKey);
+          next.push(normalise({ name, semester, attended, total, grade }));
+          imported += 1;
+        }
+
+        if (imported === 0) {
+          fail("No new valid subjects found. Check the CSV rows and existing duplicates.");
+          return;
+        }
+        if (!write(next)) {
+          fail("Your browser could not save the imported records. Check that site storage is enabled.");
+          return;
+        }
+
+        subjects = next;
+        renderDashboard();
+        renderSemesters();
+        fail("Imported " + imported + " subject" + (imported === 1 ? "" : "s")
+          + (skipped ? "; skipped " + skipped + " invalid or duplicate row" + (skipped === 1 ? "" : "s") + "." : "."));
+      } catch (error) {
+        fail(error instanceof Error ? error.message : "Could not read that CSV file.");
+      } finally {
+        input.value = "";
+      }
+    });
+  }
+
   const list = $("subject-list");
   if (list) list.addEventListener("click", (event) => {
     const editButton = event.target.closest("[data-edit]");
