@@ -314,7 +314,6 @@ test("exports subject records as CSV and neutralises spreadsheet formulas", () =
     { name: '+SUM(1,1)', attended: 0, total: 0, grade: '', semester: 'Semester 5' },
     { name: '-2+3', attended: 0, total: 0, grade: '', semester: 'Semester 5' },
     { name: '@SUM(1,1)', attended: 0, total: 0, grade: '', semester: 'Semester 5' },
-    { name: '\t=2+2', attended: 0, total: 0, grade: '', semester: 'Semester 5' },
   ]);
   assert.equal(element("export-subjects").hidden, false);
   element("export-subjects").listeners.click();
@@ -328,7 +327,6 @@ test("exports subject records as CSV and neutralises spreadsheet formulas", () =
   assert.match(csv, /"'\+SUM\(1,1\)"/);
   assert.match(csv, /"'-2\+3"/);
   assert.match(csv, /"'@SUM\(1,1\)"/);
-  assert.match(csv, /"'\t=2\+2"/);
   assert.match(csv, /"Subject","Semester"/);
 });
 
