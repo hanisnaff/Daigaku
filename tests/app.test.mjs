@@ -123,6 +123,19 @@ test("rejects CSV backups larger than 1 MB before reading them", async () => {
   assert.equal(element("import-file").value, "");
 });
 
+test("rejects CSV backups with more than 5,000 subject rows", async () => {
+  const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }]);
+  const before = store.get("daigaku.subjects.v1");
+  const header = '"Subject","Semester","Classes attended","Total classes","Attendance","Grade"';
+  const rows = Array.from({ length: 5_001 }, (_, index) =>
+    '"Subject ' + index + '","Semester 1","0","0","",""');
+  const csv = [header, ...rows].join("\r\n");
+  element("import-file").files = [{ size: csv.length, async text() { return csv; } }];
+  await element("import-file").listeners.change({ target: element("import-file") });
+  assert.equal(store.get("daigaku.subjects.v1"), before);
+  assert.match(element("form-message").textContent, /at most 5,000/);
+});
+
 test("rejects malformed CSV without changing existing records", async () => {
   const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }]);
   const before = store.get("daigaku.subjects.v1");
