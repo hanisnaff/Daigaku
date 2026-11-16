@@ -12,8 +12,9 @@ function setup(initialSubjects = [], confirmResult = true, storageWriteFails = f
     if (!elements.has(id)) {
       elements.set(id, {
         id, value: "", textContent: "", innerHTML: "", hidden: false,
-        listeners: {}, dataset: {},
+        listeners: {}, dataset: {}, files: [], clicked: false,
         addEventListener(type, handler) { this.listeners[type] = handler; },
+        click() { this.clicked = true; },
         reset() {
           for (const key of ["subject-name", "grade"]) if (elements.has(key)) elements.get(key).value = "";
           if (elements.has("attended")) elements.get("attended").value = "0";
