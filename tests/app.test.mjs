@@ -55,6 +55,12 @@ function setup(initialSubjects = [], confirmResult = true, storageWriteFails = f
   return { element, store, downloads };
 }
 
+test("homepage explains CSV backup and restore", () => {
+  const page = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+  assert.match(page, /Back up your records/);
+  assert.match(page, /Export and restore subject data with CSV backups/);
+});
+
 test("dashboard exposes CSV import and export controls", () => {
   const page = readFileSync(new URL("../dashboard.html", import.meta.url), "utf8");
   assert.match(page, /id="import-subjects"/);
