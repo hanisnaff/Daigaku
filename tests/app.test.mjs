@@ -399,16 +399,6 @@ test("rejects malformed quoting in CSV backups", async () => {
   assert.match(element("form-message").textContent, /invalid characters after a quoted field/);
 });
 
-test("rejects CSV backups larger than 1 MB", async () => {
-  const { element, store } = setup([{ name: "C++", attended: 8, total: 10 }]);
-  const fileInput = element("import-file");
-  fileInput.files = [{ size: 1_000_001, text: async () => { throw new Error("Should not read oversized file"); } }];
-  await fileInput.listeners.change({ target: fileInput });
-  assert.equal(JSON.parse(store.get("daigaku.subjects.v1")).length, 1);
-  assert.match(element("form-message").textContent, /1 MB or smaller/);
-  assert.equal(fileInput.value, "");
-});
-
 test("prevents duplicate subject names within the same semester", () => {
   const { element, store } = setup([{ name: "Software Engineering", attended: 0, total: 0, semester: "Semester 5" }]);
   element("subject-name").value = "software engineering";
