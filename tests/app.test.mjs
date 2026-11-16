@@ -49,6 +49,16 @@ function setup(initialSubjects = [], confirmResult = true) {
   return { element, store, downloads };
 }
 
+test("Vercel config applies baseline browser security headers", () => {
+  const config = JSON.parse(readFileSync(new URL("../vercel.json", import.meta.url), "utf8"));
+  const headers = config.headers?.find((rule) => rule.source === "/(.*)")?.headers ?? [];
+  const values = Object.fromEntries(headers.map((header) => [header.key, header.value]));
+  assert.equal(values["X-Content-Type-Options"], "nosniff");
+  assert.equal(values["Referrer-Policy"], "strict-origin-when-cross-origin");
+  assert.equal(values["X-Frame-Options"], "DENY");
+  assert.equal(values["Permissions-Policy"], "camera=(), microphone=(), geolocation=()");
+});
+
 test("semester page has one live records container", () => {
   const page = readFileSync(new URL("../semesters.html", import.meta.url), "utf8");
   assert.equal((page.match(/id="semester-summary"/g) || []).length, 1);
