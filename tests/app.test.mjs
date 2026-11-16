@@ -85,6 +85,20 @@ test("filters dashboard subjects without changing semester totals or exports", (
   assert.match(element("subject-list").innerHTML, /No subjects match your search/);
 });
 
+test("filtered subject actions keep their original record index", () => {
+  const { element } = setup([
+    { name: "C++", attended: 8, total: 10 },
+    { name: "Data Structures", attended: 4, total: 5 },
+  ]);
+  element("subject-search").value = "data";
+  element("subject-search").listeners.input();
+  element("subject-list").listeners.click({
+    target: { closest(selector) { return selector === "[data-edit]" ? { dataset: { edit: "1" } } : null; } },
+  });
+  assert.equal(element("subject-name").value, "Data Structures");
+  assert.equal(element("attended").value, 4);
+});
+
 test("normalises corrupted stored values before rendering", () => {
   const { element } = setup([
     { name: "  C++  ", attended: 14, total: 10, grade: "unexpected", semester: "Semester 99" },
