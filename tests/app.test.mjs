@@ -96,7 +96,7 @@ test("filtered subject actions keep their original record index", () => {
     target: { closest(selector) { return selector === "[data-edit]" ? { dataset: { edit: "1" } } : null; } },
   });
   assert.equal(element("subject-name").value, "Data Structures");
-  assert.equal(element("attended").value, 4);
+  assert.equal(element("attended").value, "4");
 });
 
 test("normalises corrupted stored values before rendering", () => {
