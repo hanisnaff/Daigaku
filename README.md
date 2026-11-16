@@ -5,6 +5,7 @@ Daigaku is a lightweight student dashboard for keeping track of subjects, attend
 ## Features
 
 - Add, edit, and remove subjects
+- Search subjects by name without changing semester totals or exports
 - Track classes attended and total classes
 - Calculate overall attendance using total classes, not an average of subject percentages
 - Record grades and group subjects by semester
