@@ -76,6 +76,7 @@
       } else if (character === "\r" || character === "\n") {
         row.push(field);
         rows.push(row);
+        if (rows.length > 5_001) throw new Error("A CSV backup can contain at most 5,000 subject rows.");
         row = [];
         field = "";
         if (character === "\r" && input[index + 1] === "\n") index += 1;
@@ -88,6 +89,7 @@
     if (field !== "" || row.length > 0) {
       row.push(field);
       rows.push(row);
+      if (rows.length > 5_001) throw new Error("A CSV backup can contain at most 5,000 subject rows.");
     }
     return rows;
   };
