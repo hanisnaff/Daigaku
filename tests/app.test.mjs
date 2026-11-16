@@ -103,11 +103,13 @@ test("normalises corrupted stored values before rendering", () => {
   const { element } = setup([
     { name: "  C++  ", attended: 14, total: 10, grade: "unexpected", semester: "Semester 99" },
     { name: "Broken counts", attended: "Infinity", total: "NaN", grade: "A", semester: "Semester 2" },
+    { name: "Fractional counts", attended: 4.5, total: 5.5, grade: "B", semester: "Semester 3" },
+    { name: "Boolean counts", attended: true, total: true, grade: "B", semester: "Semester 3" },
   ]);
   assert.equal(element("attendance-average").textContent, "100%");
   assert.match(element("subject-list").innerHTML, /C\+\+/);
   assert.match(element("subject-list").innerHTML, /Current semester/);
-  assert.doesNotMatch(element("subject-list").innerHTML, /Semester 99|14\/10/);
+  assert.doesNotMatch(element("subject-list").innerHTML, /Semester 99|14\/10|4\.5\/5\.5|Boolean counts.*1\/1/);
 });
 
 test("escapes user-provided subject names in both views", () => {
