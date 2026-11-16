@@ -210,6 +210,11 @@
       if (!file) return;
       const message = $("form-message");
       const fail = (text) => { if (message) message.textContent = text; };
+      if (Number(file.size) > 1_000_000) {
+        fail("CSV backups must be 1 MB or smaller.");
+        input.value = "";
+        return;
+      }
 
       try {
         const rows = parseCsv(await file.text());
