@@ -55,6 +55,13 @@ test("semester page has one live records container", () => {
   assert.match(page, /Manage subjects/);
 });
 
+test("hides CSV export until at least one subject exists", () => {
+  const { element, downloads } = setup([]);
+  assert.equal(element("export-subjects").hidden, true);
+  element("export-subjects").listeners.click();
+  assert.equal(downloads.length, 0);
+});
+
 test("loads old records and calculates weighted attendance", () => {
   const { element } = setup([
     { name: "C++", attended: 8, total: 10, grade: "A" },
