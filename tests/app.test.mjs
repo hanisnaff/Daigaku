@@ -76,6 +76,17 @@ test("normalises corrupted stored values before rendering", () => {
   assert.doesNotMatch(element("subject-list").innerHTML, /Semester 99|14\/10/);
 });
 
+test("escapes user-provided subject names in both views", () => {
+  const payload = '<img src=x onerror=alert(1)>';
+  const { element } = setup([
+    { name: payload, attended: 1, total: 2, semester: "Semester 3" },
+  ]);
+  assert.doesNotMatch(element("subject-list").innerHTML, /<img src=x/);
+  assert.match(element("subject-list").innerHTML, /&lt;img src=x onerror=alert\(1\)&gt;/);
+  assert.doesNotMatch(element("semester-summary").innerHTML, /<img src=x/);
+  assert.match(element("semester-summary").innerHTML, /&lt;img src=x onerror=alert\(1\)&gt;/);
+});
+
 test("edits attendance and semester without creating a duplicate", () => {
   const { element, store } = setup([{ name: "C++", attended: 8, total: 10, grade: "A" }]);
   const list = element("subject-list");
