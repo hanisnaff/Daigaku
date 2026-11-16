@@ -250,7 +250,8 @@
             && Number.isSafeInteger(total)
             && attended <= total;
 
-          if (!name || name.length > 70 || !validSemester || !validCounts || !allowedGrades.has(grade)) {
+          const validName = Boolean(name) && name.length <= 70 && !/[\u0000-\u001F\u007F]/.test(name);
+          if (!validName || !validSemester || !validCounts || !allowedGrades.has(grade)) {
             skipped += 1;
             continue;
           }
