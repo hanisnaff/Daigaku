@@ -39,3 +39,4 @@ Run the smoke tests with:
 node --check js/app.js
 node --test tests/*.test.mjs
 ```
+\n## Links\n\n- Live application: https://daigaku-ecru.vercel.app/\n- Source repository: https://github.com/hanisnaff/Daigaku\n- Developer portfolio: https://hitesh-jogeshwari-portfolio.vercel.app/\n
